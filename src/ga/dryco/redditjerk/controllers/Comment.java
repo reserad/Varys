@@ -16,6 +16,19 @@ public class Comment extends T1Data implements Post {
     public Comment reply(String text) {
         return rApi.reply(super.getName(), text);
     }
+    
+    public void fixedVote(int operation, boolean nullify) 
+    {
+    	if (!nullify) 
+    	{
+	    	if (operation < 0)
+	    		downvote();
+	    	else if (operation > 0)
+	    		upvote();
+    	}
+    	else
+    		rApi.vote(super.getName(), String.valueOf(0));
+    }
 
     public void downvote()  {
         rApi.vote(super.getName(), "-1");

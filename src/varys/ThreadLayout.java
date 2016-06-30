@@ -5,8 +5,8 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -22,6 +22,7 @@ public class ThreadLayout extends JPanel
 	private Color textColor = new Color(0, 103, 203);
 	private JButton downVote;
 	private JButton upVote;
+	private JLabel score;
 	ThreadLayout(Link submission, ImageIcon icon, String _time) 
 	{
 		this.setBackground(Color.white);
@@ -34,7 +35,7 @@ public class ThreadLayout extends JPanel
         JTextArea time = new JTextArea();
         JTextArea title = new JTextArea();
         JPanel voteContainer = new JPanel();
-        JLabel score = new JLabel();
+        score = new JLabel();
         
         ImageIcon upArrow = new ImageIcon(
                 getClass().getClassLoader().getResource("resources/up-arrow.png"));
@@ -48,26 +49,17 @@ public class ThreadLayout extends JPanel
 		
 		if (_text.length() > 20)
 			_text = _text.substring(0, 20) + "...";
-        panel = new JPanel();
-        
-        panel.setLayout(new GridBagLayout());
 
         picture.setIcon(icon);
-        panel.add(picture, GridbagConstraintsSetup.getConstraints(1, 0, 0, 0, 3, 1, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0)));
 
         author.setText(_author);
         author.setOpaque(true);
-        panel.add(author, GridbagConstraintsSetup.getConstraints(2, 0, 0, 0, 1, 5, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0)));
 
         text.setText(_text);
         text.setOpaque(false);
-        text.setFont(new Font("Tahoma", Font.BOLD, 9));
-        title.setForeground(Color.DARK_GRAY);
-        panel.add(text, GridbagConstraintsSetup.getConstraints(2, 2, 0, 0, 1, 5, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0)));
+        text.setFont(new Font("Tahoma", Font.BOLD, 9));     
 
         time.setText(_time);
-        title.setLineWrap(true);
-        title.setWrapStyleWord(true);
         time.setEditable(false);
         time.setOpaque(false);
         time.setFont(new Font("Tahoma", Font.BOLD, 8));
@@ -75,57 +67,39 @@ public class ThreadLayout extends JPanel
         
         title.setLineWrap(true);
         title.setWrapStyleWord(true);
-        panel.add(time, GridbagConstraintsSetup.getConstraints(1, 0, 0, 0, 1, 1, GridBagConstraints.BOTH, new Insets(0, 3, 0, 3)));
-
         title.setEditable(false);
         title.setOpaque(false);
         title.setText(_title);
         title.setFont(new Font("Tahoma", 1, 13));
         title.setForeground(textColor);
-        title.setLineWrap(true);
-        title.setWrapStyleWord(true);
-        title.setOpaque(false);
         
-        panel.add(title, GridbagConstraintsSetup.getConstraints(2, 1, 0, 0, 1, 5, GridBagConstraints.BOTH, new Insets(0, 3, 0, 3)));
-        
-        voteContainer.setOpaque(false);
-        voteContainer.setLayout(new BoxLayout(voteContainer, BoxLayout.Y_AXIS));
-        voteContainer.setAlignmentX(JPanel.LEFT_ALIGNMENT);
-
-        upVote.setIcon(new ImageIcon(ImageManipulation.getScaledImage(upArrow.getImage(), 10, 10)));
-        upVote.addMouseListener(new MouseAdapter () 
-        {
-            @Override
-            public void mouseClicked(MouseEvent me) 
-            {
-            	upVote(submission, upVote, downVote);
-            }
-        });
-        
-        voteContainer.add(upVote);
+        panel = new JPanel(new GridBagLayout());
+        panel.add(picture, GridbagConstraintsSetup.getConstraints(1, 0, 0, 0, 3, 1, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0)));
+        panel.add(author, GridbagConstraintsSetup.getConstraints(2, 0, 0, 0, 1, 5, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0)));
+        panel.add(text, GridbagConstraintsSetup.getConstraints(2, 2, 0, 0, 1, 5, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0)));
+        panel.add(time, GridbagConstraintsSetup.getConstraints(1, 0, 0, 0, 1, 1, GridBagConstraints.BOTH, new Insets(0, 3, 0, 3)));
+        panel.add(title, GridbagConstraintsSetup.getConstraints(2, 1, 0, 0, 1, 5, GridBagConstraints.BOTH, new Insets(0, 3, 0, 3)));   
         
         score.setText(String.valueOf(_score));
         score.setHorizontalAlignment(JLabel.LEFT);
-        voteContainer.add(score);        
         
-        if (submission.getLikes() != null) 
-        {
-        	upVote.setEnabled(!submission.getLikes());
-        	downVote.setEnabled(submission.getLikes());  
-        }
+        upVote.setName("up");
+        upVote.setIcon(new ImageIcon(ImageManipulation.getScaledImage(upArrow.getImage(), 10, 10)));
         
+        downVote.setName("down");
         downVote.setIcon(new ImageIcon(ImageManipulation.getScaledImage(downArrow.getImage(), 10, 10)));
-        downVote.addMouseListener(new MouseAdapter () 
-        {
-            @Override
-            public void mouseClicked(MouseEvent me) 
-            {
-            	downVote(submission, upVote, downVote);
-            }
-        });
         
+        performButtonOperation(upVote, submission);   
+        performButtonOperation(downVote, submission);
+        
+        colorScore(submission);
+        
+        voteContainer.setOpaque(false);
+        voteContainer.setLayout(new BoxLayout(voteContainer, BoxLayout.Y_AXIS));
+        voteContainer.setAlignmentX(JPanel.LEFT_ALIGNMENT);    
+        voteContainer.add(score);
+        voteContainer.add(upVote);
         voteContainer.add(downVote);
-
         panel.add(voteContainer, GridbagConstraintsSetup.getConstraints(0, 1, 0, 0, 1, 1, GridBagConstraints.BOTH, new Insets(0,0,0,0)));
 	}
 
@@ -134,16 +108,77 @@ public class ThreadLayout extends JPanel
 		return panel;
 	}
 	
-    private static void upVote(Link thread, JButton upVote, JButton downVote) 
-    {
-    	thread.upvote(); 
-    	upVote.setEnabled(false); 
-    	downVote.setEnabled(true);
+	private void performButtonOperation(JButton button, Link submission) 
+	{
+		button.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent ae) 
+            {
+            	int operation = 0;
+            	boolean nullify = false;
+            	if(button.getName().equals("down"))
+            	{
+            		if (submission.getLikes() == null) 
+            		{
+            			submission.setLikes(false);
+            			operation = -1;
+            		}
+            		else if(submission.getLikes()) 
+            		{
+            			submission.setLikes(false);
+            			operation = -2;
+            		}
+            		else 
+            		{
+            			submission.setLikes(null);
+            			nullify = true;
+            			operation = 1;
+            		}
+            		submission.fixedVote(operation, nullify);
+            	}
+            	else if(button.getName().equals("up")) 
+            	{
+            		if (submission.getLikes() == null) 
+            		{
+            			submission.setLikes(true);
+            			operation = 1;
+            		}
+            		else if (!submission.getLikes())
+            		{
+            			submission.setLikes(true);
+            			operation = 2;
+            		}
+            		else 
+            		{
+            			submission.setLikes(null);
+            			nullify = true;
+            			operation = -1;
+            		}
+            		submission.fixedVote(operation, nullify);
+            	}
+        		colorScore(submission);
+        		tallyScore(submission, operation);
+            }
+        });
 	}
-    private static void downVote(Link thread, JButton downVote, JButton upVote) 
-    {
-    	thread.downvote();
-    	upVote.setEnabled(true);
-    	downVote.setEnabled(false);
+	
+	private void colorScore(Link submission) 
+	{
+        if (submission.getLikes() != null) 
+        {
+        	if (submission.getLikes())
+        		score.setForeground(Color.orange);
+        	else
+        		score.setForeground(Color.blue);
+        }
+        else 
+        {
+        	score.setForeground(Color.black);
+        }
+	}
+	
+	private void tallyScore(Link submission, int operation) 
+	{
+		score.setText(String.valueOf(Integer.parseInt(score.getText()) + operation));
 	}
 }

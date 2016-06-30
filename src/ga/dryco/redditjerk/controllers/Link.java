@@ -9,6 +9,19 @@ public class Link extends T3Data implements Post{
 
     private Reddit rApi = RedditApi.getRedditInstance();
 
+    public void fixedVote(int operation, boolean nullify) 
+    {
+    	if (!nullify) 
+    	{
+	    	if (operation < 0)
+	    		downvote();
+	    	else if (operation > 0)
+	    		upvote();
+    	}
+    	else
+    		rApi.vote(super.getName(), String.valueOf(0));
+    }
+    
     public void downvote()  {
         rApi.vote(super.getName(), "-1");
     }

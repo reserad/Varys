@@ -7,9 +7,11 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.JPanel;
 
-public class ImageManipulation extends JPanel{
+public class ImageManipulation extends JPanel
+{
+	private static final long serialVersionUID = 6121447930628018594L;
 
-    public static Image getScaledImage(Image srcImg, int w, int h)
+	public static Image getScaledImage(Image srcImg, int w, int h)
     {
         BufferedImage resizedImg = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2 = resizedImg.createGraphics();

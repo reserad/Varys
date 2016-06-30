@@ -48,10 +48,12 @@ public class InitializeLayout extends JPanel
     private LoadingGlassPane lgp;
     InitializeLayout(JFrame frame, Reddit red, User myUser, LoadingGlassPane lgp) throws MalformedURLException, IOException, ParseException
     {
-    	this.lgp = lgp;
-    	this.frame = frame;
     	setLayout(new GridBagLayout());
     	setBackground(bgColor);
+    	
+    	this.lgp = lgp;
+    	this.frame = frame;
+
     	JPanel toolBar = new JPanel();
     	toolBar.setLayout(new BoxLayout(toolBar, BoxLayout.X_AXIS));
     	toolBar.setBackground(bgColor);
@@ -62,23 +64,26 @@ public class InitializeLayout extends JPanel
         subreddits = new JPanel();
         subreddits.setLayout(new GridLayout());
         subreddits.setBackground(bgColor);
+        
         jsp = new JScrollPane(subreddits); 
         jsp.setBorder(null);
         subreddits = new JPanel(new GridLayout(populateSubreddits(PopulateSubredditEntries.getSubreddits(), red, 0), 1));
         add(jsp, GridbagConstraintsSetup.getConstraints(0, 1, 1, 1, 1, 1, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0)));   
         
         postsInSubreddit = new JPanel();
+        postsInSubreddit.setBackground(Color.white);
 		jsp2 = new JScrollPane(postsInSubreddit);
 		jsp2.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 1, 0, 1, new Color(120, 120, 120)));
-		postsInSubreddit.setBackground(Color.white);
         add(jsp2, GridbagConstraintsSetup.getConstraints(1, 1, 1, 1, 1, 1, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0)));   
         
         browser = new JPanel();
+        browser.setBackground(Color.white);
         browser.setLayout(new BoxLayout(browser, BoxLayout.Y_AXIS));
         browser.setAlignmentX(RIGHT_ALIGNMENT);
+        
 		jsp3 = new JScrollPane(browser);
 		jsp3.setBorder(null);
-		browser.setBackground(Color.white);
+		
         add(jsp3, GridbagConstraintsSetup.getConstraints(2, 1, 2, 1, 1, 2, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0)));   
         
         this.addComponentListener(new ComponentAdapter () 

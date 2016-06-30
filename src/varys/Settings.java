@@ -7,7 +7,6 @@ import java.awt.GridLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.security.NoSuchAlgorithmException;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
@@ -75,7 +74,7 @@ public class Settings extends JPanel
 				password.setText(account.getPassword());
 				username.setText(account.getUsername());
 			} 
-			catch (NoSuchAlgorithmException e) 
+			catch (Exception e) 
 			{
             	JOptionPane.showConfirmDialog(null, "You credentials are corrupt! Please re-enter them in the settings tab.", "Error!",
             	        JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);

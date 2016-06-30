@@ -8,7 +8,7 @@ import javax.swing.ImageIcon;
 public class ThumbnailParser 
 {
 	private Urls type;
-	private String url;
+	private String url = "";
 	ThumbnailParser(String url) 
 	{
 		this.url = url;
@@ -23,10 +23,11 @@ public class ThumbnailParser
 	
 	ImageIcon getThumbnail() throws MalformedURLException 
 	{
-		if (type.equals(Urls.youtube)) 
+		if (type!= null && type.equals(Urls.youtube)) 
 		{
-			url = url.split("https://www.youtube.com/watch?v=")[1];
-			return new ImageIcon(new URL("http://img.youtube.com/vi/" + url + "/0.jpg"));
+			String[] urlPart = url.split("=");
+			ImageIcon img = new ImageIcon(new URL("http://img.youtube.com/vi/" + urlPart[1] + "/0.jpg"));
+			return new ImageIcon(ImageManipulation.getScaledImage(img.getImage(), 100,100));
 		}
 		return null;
 	}
