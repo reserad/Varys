@@ -68,13 +68,13 @@ public class InitializeLayout extends JPanel
         jsp = new JScrollPane(subreddits); 
         jsp.setBorder(null);
         subreddits = new JPanel(new GridLayout(populateSubreddits(PopulateSubredditEntries.getSubreddits(), red, 0), 1));
-        add(jsp, GridbagConstraintsSetup.getConstraints(0, 1, 1, 1, 1, 1, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0)));   
+        add(jsp, GridbagConstraintsSetup.getConstraints(0, 1, 1, 1, 3, 1, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0)));   
         
         postsInSubreddit = new JPanel();
         postsInSubreddit.setBackground(Color.white);
 		jsp2 = new JScrollPane(postsInSubreddit);
 		jsp2.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 1, 0, 1, new Color(120, 120, 120)));
-        add(jsp2, GridbagConstraintsSetup.getConstraints(1, 1, 1, 1, 1, 1, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0)));   
+        add(jsp2, GridbagConstraintsSetup.getConstraints(1, 1, 1, 1, 3, 1, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0)));   
         
         browser = new JPanel();
         browser.setBackground(Color.white);
@@ -84,7 +84,9 @@ public class InitializeLayout extends JPanel
 		jsp3 = new JScrollPane(browser);
 		jsp3.setBorder(null);
 		
-        add(jsp3, GridbagConstraintsSetup.getConstraints(2, 1, 2, 1, 1, 2, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0)));   
+		add(new JPanel(), GridbagConstraintsSetup.getConstraints(2, 1, 2, 1, 1, 2, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0)));
+		
+        add(jsp3, GridbagConstraintsSetup.getConstraints(2, 2, 2, 1, 2, 2, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0)));   
         
         this.addComponentListener(new ComponentAdapter () 
         {

@@ -14,7 +14,7 @@ import ga.dryco.redditjerk.controllers.User;
 /**
  *
  * @author areser
- */
+ *////
 public class Varys
 {
 	private static String clientId = "Ko0GIsrmvqHFPQ";

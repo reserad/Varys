@@ -10,6 +10,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.List;
+
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -69,12 +71,16 @@ public class CommentLayout extends JPanel
         {
             public void mouseClicked(MouseEvent e)
             {
-            	UrlDialogLayout panel = new UrlDialogLayout(UrlParser.extractUrls(textToExtract));
-            	JOptionPane.showMessageDialog(
-            			new JFrame("URL found!"), 
-            			panel.getPanel(),
-            			"Comment contained URL(s) found.", 
-            			JOptionPane.QUESTION_MESSAGE);
+            	List<String> urls = UrlParser.extractUrls(textToExtract);
+            	if (!urls.isEmpty()) 
+            	{
+	            	UrlDialogLayout panel = new UrlDialogLayout(urls);
+	            	JOptionPane.showMessageDialog(
+	            			new JFrame("URL found!"), 
+	            			panel.getPanel(),
+	            			"Comment contained URL(s) found.", 
+	            			JOptionPane.QUESTION_MESSAGE);
+            	}
             }
         });
             
