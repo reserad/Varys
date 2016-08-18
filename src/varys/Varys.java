@@ -2,11 +2,18 @@ package varys;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.EventQueue;
+import java.io.IOException;
+import java.net.MalformedURLException;
+
 import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+
+import org.json.simple.parser.ParseException;
+
 import com.alee.laf.WebLookAndFeel;
 import ga.dryco.redditjerk.Reddit;
 import ga.dryco.redditjerk.RedditApi;
@@ -21,7 +28,7 @@ public class Varys
 	private static String secret = "kntdzuy1Oknd_jJ7JxXel0K2ueg";
     public static void main(String[] args) 
     {
-        SwingUtilities.invokeLater ( new Runnable ()
+    	EventQueue.invokeLater ( new Runnable ()
         {
             public void run ()
             {
@@ -43,22 +50,41 @@ public class Varys
         
                 	LoadingGlassPane lgp = new LoadingGlassPane(f);
                 	f.setGlassPane(lgp.glass);
-                    InitializeLayout d = new InitializeLayout(f, red, myUser, lgp);
                     JTabbedPane pane = new JTabbedPane();
-                    Settings settings = new Settings();
-                    pane.add("<html><body style='color:white;'>HOME</body></html>", d);
-                    pane.setBackgroundAt(0, new Color(0, 114, 198));
-                    pane.add("SETTINGS", settings);
-                    pane.addChangeListener(new ChangeListener() 
+                    
+                    final User fUser = myUser;
+                    SwingUtilities.invokeLater(new Runnable() 
                     {
-                        public void stateChanged(ChangeEvent e) 
+                        public void run() 
                         {
-                            if (pane.getSelectedIndex() == 1) 
-                            {
-                            	settings.setData(profile, path);
-                            }
+                        	try
+                        	{
+                        		Settings settings = new Settings();
+								pane.add("<html><body style='color:white;'>HOME</body></html>", new InitializeLayout(f, red, fUser, lgp));
+								pane.setBackgroundAt(0, new Color(0, 114, 198));
+			                    pane.add("SETTINGS", settings);
+			                    pane.addChangeListener(new ChangeListener() 
+			                    {
+			                        public void stateChanged(ChangeEvent e) 
+			                        {
+			                            if (pane.getSelectedIndex() == 1) 
+			                            {
+			                            	settings.setData(profile, path);
+			                            }
+			                        }
+			                    });
+							} catch (MalformedURLException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							} catch (IOException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							} catch (ParseException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
                         }
-                    });
+                	});
                     
         			f.pack();
         			f.setVisible(true);

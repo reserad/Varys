@@ -12,7 +12,6 @@ public class LoadingGlassPane extends JPanel
 	JPanel glass;
 	LoadingGlassPane(JFrame container) 
 	{
-		setSize(200, 200);
 		glass = (JPanel) container.getGlassPane();
 		this.setVisible(true);
 		this.setLayout(new GridBagLayout());

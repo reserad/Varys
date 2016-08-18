@@ -3,7 +3,10 @@ package varys;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -33,19 +36,23 @@ import ga.dryco.redditjerk.datamodels.T1;
 public class PopulateSubredditEntries extends JPanel
 {
 	private static final long serialVersionUID = 3878310295757572973L;
+	private static JPanel browserHeader;
 	private JPanel browser;
 	private JPanel postsInSubreddit;
 	private JScrollPane jsp2;
 	private Reddit red;
 	private JScrollPane jsp3;
+	//private JScrollPane jsp4;
 	private Color highlightColor;
 	private Color threadBackgroundColor;
 	private JFrame frame;
 	private LoadingGlassPane lgp;
 	
-	PopulateSubredditEntries(JFrame frame, JPanel browser, JPanel postsInSubreddit, JScrollPane jsp2, JScrollPane jsp3, Reddit red, Color highlightColor, Color threadBackgroundColor, LoadingGlassPane lgp) 
+	PopulateSubredditEntries(JFrame frame, JPanel browserHeader, JPanel browser, JPanel postsInSubreddit, JScrollPane jsp2, JScrollPane jsp3, Reddit red, Color highlightColor, Color threadBackgroundColor, LoadingGlassPane lgp) 
 	{
+		//this.jsp4 = jsp4;
 		this.lgp = lgp;
+		PopulateSubredditEntries.browserHeader = browserHeader;
 		this.browser = browser;
 		this.postsInSubreddit = postsInSubreddit;
 		this.jsp2 = jsp2;
@@ -74,9 +81,9 @@ public class PopulateSubredditEntries extends JPanel
     	{
 			@Override
 			public void run() 
-			{
+			{                
 				long systemTime = System.currentTimeMillis();
-                postsInSubreddit.removeAll();
+                
                 ImageIcon genericImageTemplate = new ImageIcon(
                         getClass().getClassLoader().getResource("resources/sprite-reddit.ZDiVRxCXXWg.png"));
                 postsInSubreddit.setLayout(new BoxLayout(postsInSubreddit, BoxLayout.Y_AXIS));
@@ -108,10 +115,11 @@ public class PopulateSubredditEntries extends JPanel
                     
                     Date d = new Date(Long.parseLong(String.valueOf(submission.getCreated()).replace(".", "").replace("E9", "")));
 
-                    ThreadLayout threadLayout = new ThreadLayout(submission, img, TimeFormat.getDisplayTime(d.getTime(), systemTime));
+                    String _time = TimeFormat.getDisplayTime(d.getTime(), systemTime);
+                    ThreadLayout threadLayout = new ThreadLayout(submission, img, _time);
                     JPanel thread = threadLayout.getPanel();
                     thread.setBackground(threadBackgroundColor);
-                    
+                    final ImageIcon _img = img;
                     for (Component component: thread.getComponents()) 
                     {
                     	component.addMouseListener(new MouseAdapter () 
@@ -119,7 +127,10 @@ public class PopulateSubredditEntries extends JPanel
         	                @Override
         	                public void mouseClicked(MouseEvent me) 
         	                {
-        	                	clearBrowser(submission);
+        	                    browser.removeAll();
+        	                    //browserHeader.removeAll();
+        	                    //jsp4.removeAll();
+        	                	clearBrowser(submission, _img, _time);
         	                }
         	                @Override
         	                public void mouseEntered(MouseEvent e) 
@@ -174,25 +185,49 @@ public class PopulateSubredditEntries extends JPanel
     	t.start();
     }
     
-    private void clearBrowser(Link submission) 
+    private void clearBrowser(Link submission, ImageIcon genericImageTemplate, String _time) 
     {
-        browser.removeAll();
         jsp3.setSize(jsp3.getWidth(), jsp3.getHeight());
         jsp3.getVerticalScrollBar().setUnitIncrement(16);
         RedditThread post;
-		try 
+		try
 		{
 			post = red.getRedditThread("http://www.reddit.com" + submission.getPermalink(), Sorting.HOT);
-			List<T1> comments = post.getComments().getData().getChildren();
-			browser.setLayout(new BoxLayout(browser, BoxLayout.Y_AXIS));
-			browser.setAlignmentX(JPanel.RIGHT_ALIGNMENT);
-			browser = PopulateCommentEntries.begin(lgp, comments, 0, true, browser, jsp3.getWidth());
+			try 
+			{
+				List<T1> comments = post.getComments().getData().getChildren();
+				
+				browserHeader.setLayout(new GridBagLayout());
+				browserHeader = new CommentSummaryLayout(submission, genericImageTemplate, _time).getPanel();
+				//browserHeader.setSize(jsp3.getWidth(), (jsp3.getHeight() * 2) / 3);
+				//browserHeader.setBounds(0, 0, jsp3.getWidth(), (jsp3.getHeight() * 2) / 3);
+				//frame.add(browserHeader, GridbagConstraintsSetup.getConstraints(2, 1, 1, 1, 1, 1, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0)));
+				
+				//jsp4.add(browserHeader);
+				browser.setLayout(new BoxLayout(browser, BoxLayout.Y_AXIS));
+				browser.setAlignmentX(JPanel.RIGHT_ALIGNMENT);
+				browser = PopulateCommentEntries.printComments(comments, 0, true, browser, jsp3.getWidth());
+			} 
+			catch (Exception e) 
+			{
+				if (browser.getComponentCount() == 0)
+            	JOptionPane.showConfirmDialog(null, "This thread is empty.", "Alert!",
+            	        JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE);
+			}
+			
 			InitializeLayout.updateScrollPanelWidths();
 		} 
 		catch (MalformedURLException e) 
 		{
 			e.printStackTrace();
 		}
+    }
+    
+    static JPanel getPanel() 
+    {
+    	if (browserHeader == null)
+    		return new JPanel();
+		return browserHeader;
     }
     
     private void setNavButtonFunctionality(JButton button, int pageNumber, List<Link> submissions, Reddit red, boolean isNext) 
@@ -210,6 +245,7 @@ public class PopulateSubredditEntries extends JPanel
             		int page = isNext ? pageNumber + 1 : pageNumber - 1;
             		
                     browser.removeAll();
+                    browserHeader.removeAll();
                     jsp3.setSize(jsp3.getWidth(), jsp3.getHeight());
                     jsp3.getVerticalScrollBar().setUnitIncrement(16);
                     

@@ -26,7 +26,7 @@ public class ThreadLayout extends JPanel
 	ThreadLayout(Link submission, ImageIcon icon, String _time) 
 	{
 		this.setBackground(Color.white);
-        upVote = new JButton(); 
+        upVote = new JButton();
         downVote = new JButton();
         
         JLabel picture = new JLabel();

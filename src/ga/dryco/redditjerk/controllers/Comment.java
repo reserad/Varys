@@ -5,11 +5,8 @@ import ga.dryco.redditjerk.Reddit;
 import ga.dryco.redditjerk.RedditApi;
 import ga.dryco.redditjerk.datamodels.T1Data;
 
-
-
-
-
-public class Comment extends T1Data implements Post {
+public class Comment extends T1Data implements Post 
+{
 
     private Reddit rApi = RedditApi.getRedditInstance();
 

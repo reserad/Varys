@@ -12,12 +12,14 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
 
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import ga.dryco.redditjerk.controllers.Comment;
 
@@ -29,7 +31,7 @@ public class CommentLayout extends JPanel
 	private JButton downVote;
 	private JLabel score;
 	CommentLayout(Comment comment) 
-	{
+	{		
         upVote = new JButton();
         downVote = new JButton();
         score = new JLabel();
@@ -75,9 +77,10 @@ public class CommentLayout extends JPanel
             	if (!urls.isEmpty()) 
             	{
 	            	UrlDialogLayout panel = new UrlDialogLayout(urls);
+	        		JScrollPane scroller = new JScrollPane(panel.getPanel());
 	            	JOptionPane.showMessageDialog(
 	            			new JFrame("URL found!"), 
-	            			panel.getPanel(),
+	            			scroller,
 	            			"Comment contained URL(s) found.", 
 	            			JOptionPane.QUESTION_MESSAGE);
             	}

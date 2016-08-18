@@ -38,9 +38,11 @@ public class InitializeLayout extends JPanel
 	private JPanel subreddits;
 	private static JPanel postsInSubreddit;
 	private static JPanel browser;
+	private static JPanel browserHeader;
     private JScrollPane jsp;
 	private static JScrollPane jsp2;
 	private static JScrollPane jsp3;
+	private static JScrollPane jsp4;
 	private JFrame frame;
     private Color bgColor = new Color(247,247,247);
     private Color highlightColor = new Color(230,242,250);
@@ -53,6 +55,14 @@ public class InitializeLayout extends JPanel
     	
     	this.lgp = lgp;
     	this.frame = frame;
+    	
+		browserHeader = new JPanel();
+		browserHeader.setName("browserHeader");
+		browserHeader.setLayout(new GridBagLayout());
+		jsp4 = new JScrollPane(browserHeader,         
+				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, 
+		        JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		jsp4.setBorder(null);
 
     	JPanel toolBar = new JPanel();
     	toolBar.setLayout(new BoxLayout(toolBar, BoxLayout.X_AXIS));
@@ -68,13 +78,13 @@ public class InitializeLayout extends JPanel
         jsp = new JScrollPane(subreddits); 
         jsp.setBorder(null);
         subreddits = new JPanel(new GridLayout(populateSubreddits(PopulateSubredditEntries.getSubreddits(), red, 0), 1));
-        add(jsp, GridbagConstraintsSetup.getConstraints(0, 1, 1, 1, 3, 1, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0)));   
+        add(jsp, GridbagConstraintsSetup.getConstraints(0, 1, 1, 1, 4, 1, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0)));   
         
         postsInSubreddit = new JPanel();
         postsInSubreddit.setBackground(Color.white);
 		jsp2 = new JScrollPane(postsInSubreddit);
 		jsp2.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 1, 0, 1, new Color(120, 120, 120)));
-        add(jsp2, GridbagConstraintsSetup.getConstraints(1, 1, 1, 1, 3, 1, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0)));   
+        add(jsp2, GridbagConstraintsSetup.getConstraints(1, 1, 1, 1, 4, 1, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0)));   
         
         browser = new JPanel();
         browser.setBackground(Color.white);
@@ -84,10 +94,11 @@ public class InitializeLayout extends JPanel
 		jsp3 = new JScrollPane(browser);
 		jsp3.setBorder(null);
 		
-		add(new JPanel(), GridbagConstraintsSetup.getConstraints(2, 1, 2, 1, 1, 2, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0)));
+
 		
-        add(jsp3, GridbagConstraintsSetup.getConstraints(2, 2, 2, 1, 2, 2, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0)));   
-        
+		add(jsp3, GridbagConstraintsSetup.getConstraints(2, 2, 2, 2, 2, 2, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0)));   
+		add(jsp4, GridbagConstraintsSetup.getConstraints(2, 1, 2, 1, 1, 2, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0)));
+		
         this.addComponentListener(new ComponentAdapter () 
         {
             @Override
@@ -101,14 +112,15 @@ public class InitializeLayout extends JPanel
     static void updateScrollPanelWidths() 
     {
         browser.revalidate();
-        postsInSubreddit.repaint();
+        browser.repaint();
         postsInSubreddit.revalidate();
+        postsInSubreddit.repaint();
         
         for (Component c: postsInSubreddit.getComponents()) 
         {
             if (c instanceof JPanel)
             {
-            		c.setSize(new Dimension((jsp2.getWidth()), c.getHeight()));
+        		c.setSize(new Dimension((jsp2.getWidth()), c.getHeight()));
             }
         }
         for (Component c: browser.getComponents()) 
@@ -124,7 +136,30 @@ public class InitializeLayout extends JPanel
                     }
             	}
             }
-        }
+        }        
+
+        JPanel bh = PopulateSubredditEntries.getPanel();
+        bh.setSize(new Dimension((jsp4.getWidth()), jsp4.getHeight()));
+        jsp4.remove(browserHeader);
+        browserHeader = bh;
+		browserHeader.setName("browserHeader");
+		browserHeader.setLayout(new GridBagLayout());
+    	jsp4.revalidate();
+    	//jsp4.repaint();
+        jsp4.add(browserHeader);
+    	for (Component cc: ((JPanel) bh).getComponents()) 
+    	{
+            if (cc instanceof JTextArea && (cc.getName().equals("title") || cc.getName().equals("titleInfo") || cc.getName().equals("titleBody")))
+            { 
+            	//System.out.println("Name: " + cc.getName() + " Width: " + cc.getWidth() + " Height: " + cc.getHeight());
+            	//System.out.println("JSP4 Width: " + jsp4.getWidth() + " JSP4 Height: " + jsp4.getHeight());
+            	//c.setSize(new Dimension((jsp3.getWidth() * 5) / 8, c.getHeight()));
+            }
+    	}        
+    	jsp4.revalidate();
+    	//jsp4.repaint();
+        //System.out.println("JSP4 Width: " + jsp4.getWidth() + "scroll pane Width: " + browserHeader.getWidth());
+        //System.out.println("JSP4 Height: " + jsp4.getHeight() + "scroll pane Height: " + browserHeader.getHeight());
     }    
 
        
@@ -138,6 +173,7 @@ public class InitializeLayout extends JPanel
     	node.add(new DefaultMutableTreeNode("Deleted Items"));
     	
         jsp.getVerticalScrollBar().setUnitIncrement(16);
+        jsp4.getVerticalScrollBar().setUnitIncrement(16);
         ArrayList<String> subs = new ArrayList<String>(Arrays.asList(threads));
         
         for(final String thread: subs) 
@@ -156,7 +192,12 @@ public class InitializeLayout extends JPanel
                 	contains = subs.contains(title);
                 	if (contains)
                 	{
-                    	PopulateSubredditEntries populate = new PopulateSubredditEntries(frame, browser, postsInSubreddit, jsp2, jsp3, red, highlightColor, threadBackgroundColor, lgp);
+        				postsInSubreddit.removeAll();
+                        browser.removeAll();
+                        browserHeader.removeAll();
+                        //jsp4.removeAll();
+                        
+                    	PopulateSubredditEntries populate = new PopulateSubredditEntries(frame, browserHeader, browser, postsInSubreddit, jsp2, jsp3, red, highlightColor, threadBackgroundColor, lgp);
                     	populate.RefreshSubmissions(populate.GetSubmissions(title, red, pageNumber, "", true), pageNumber);
                 	}
                 } 
